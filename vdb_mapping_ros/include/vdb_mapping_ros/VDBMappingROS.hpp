@@ -173,6 +173,7 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
         1,
         boost::bind(&VDBMappingROS::cloudCallback, this, _1, sensor_source)));
     }
+    m_data_cloud_sub = m_nh.subscribe("data_points", 1, &VDBMappingROS::dataCloudCallback, this);
   }
 
   m_visualization_marker_pub =
@@ -535,6 +536,44 @@ void VDBMappingROS<VDBMappingT>::publishUpdates(typename VDBMappingT::UpdateGrid
     m_map_overwrite_pub.publish(msg);
   }
 }
+
+template <typename VDBMappingT>
+void VDBMappingROS<VDBMappingT>::dataCloudCallback(
+  const sensor_msgs::PointCloud2::ConstPtr& cloud_msg)
+{
+  geometry_msgs::TransformStamped sensor_to_map_tf;
+  try
+  {
+    // Get sensor origin transform in map coordinates
+    sensor_to_map_tf =
+      m_tf_buffer.lookupTransform(m_map_frame, cloud_msg->header.frame_id, cloud_msg->header.stamp);
+  }
+  catch (tf2::TransformException& ex)
+  {
+    ROS_ERROR_STREAM("Transform to map frame failed:" << ex.what());
+    return;
+  }
+  // Transform pointcloud into map reference system
+  sensor_msgs::PointCloud2::Ptr cloud(new sensor_msgs::PointCloud2);
+  tf2::doTransform(*cloud_msg, *cloud, sensor_to_map_tf);
+  // pcl::transformPointCloud(*cloud, *cloud, tf2::transformToEigen(sensor_to_map_tf).matrix());
+  cloud->header.frame_id = m_map_frame;
+
+  typename VDBMappingT::DataCloudT::Ptr data_cloud(new typename VDBMappingT::DataCloudT);
+  pcl::fromROSMsg(*cloud, *data_cloud);
+
+  insertDataCloud(data_cloud, sensor_to_map_tf);
+}
+
+template <typename VDBMappingT>
+void VDBMappingROS<VDBMappingT>::insertDataCloud(const typename VDBMappingT::DataCloudT::Ptr cloud,
+                                                 const geometry_msgs::TransformStamped transform)
+{
+  Eigen::Matrix<double, 3, 1> sensor_to_map_eigen = tf2::transformToEigen(transform).translation();
+  m_vdb_map->insertDataCloud(cloud, sensor_to_map_eigen);
+}
+
+
 
 template <typename VDBMappingT>
 void VDBMappingROS<VDBMappingT>::insertPointCloud(

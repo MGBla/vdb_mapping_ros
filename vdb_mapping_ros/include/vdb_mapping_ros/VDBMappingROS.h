@@ -129,6 +129,21 @@ public:
   void insertPointCloud(const typename VDBMappingT::PointCloudT::Ptr cloud,
                         const geometry_msgs::TransformStamped transform);
 
+  /*!
+   * \brief Callback for data clouds. All data will be transformed into the map frame.
+   *
+   * \param cloud_msg the cloud
+   */
+  void dataCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud_msg);
+
+  /*!
+   * \brief Integrating the transformed datacloud into the core mapping library
+   *
+   * \param cloud Data cloud transformed into map coordinates
+   * \param tf Sensor transform in map coordinates
+   */
+  void insertDataCloud(const typename VDBMappingT::DataCloudT::Ptr cloud,
+                       const geometry_msgs::TransformStamped transform);
 
   /*!
    * \brief Publishes a marker array and pointcloud representation of the map
@@ -323,6 +338,12 @@ private:
    * \brief Subscriber vector for pointclouds
    */
   std::vector<ros::Subscriber> m_cloud_subs;
+
+  /*!
+   * \brief Subscriber for data pointclouds
+   */
+  ros::Subscriber m_data_cloud_sub;
+
 
   /*!
    * \brief Publisher for the marker array
