@@ -173,7 +173,9 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
         1,
         boost::bind(&VDBMappingROS::cloudCallback, this, _1, sensor_source)));
     }
-    m_data_cloud_sub = m_nh.subscribe("data_points", 1, &VDBMappingROS::dataCloudCallback, this);
+    std::string data_identifier = "test";
+    m_data_cloud_sub            = m_nh.subscribe<sensor_msgs::PointCloud2>(
+      "data_points", 1, boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, data_identifier));
   }
 
   m_visualization_marker_pub =
@@ -539,7 +541,7 @@ void VDBMappingROS<VDBMappingT>::publishUpdates(typename VDBMappingT::UpdateGrid
 
 template <typename VDBMappingT>
 void VDBMappingROS<VDBMappingT>::dataCloudCallback(
-  const sensor_msgs::PointCloud2::ConstPtr& cloud_msg)
+  const sensor_msgs::PointCloud2::ConstPtr& cloud_msg, std::string data_identifier)
 {
   geometry_msgs::TransformStamped sensor_to_map_tf;
   try
@@ -562,15 +564,16 @@ void VDBMappingROS<VDBMappingT>::dataCloudCallback(
   typename VDBMappingT::DataCloudT::Ptr data_cloud(new typename VDBMappingT::DataCloudT);
   pcl::fromROSMsg(*cloud, *data_cloud);
 
-  insertDataCloud(data_cloud, sensor_to_map_tf);
+  insertDataCloud(data_identifier, data_cloud, sensor_to_map_tf);
 }
 
 template <typename VDBMappingT>
-void VDBMappingROS<VDBMappingT>::insertDataCloud(const typename VDBMappingT::DataCloudT::Ptr cloud,
+void VDBMappingROS<VDBMappingT>::insertDataCloud(std::string data_identifier,
+                                                 const typename VDBMappingT::DataCloudT::Ptr cloud,
                                                  const geometry_msgs::TransformStamped transform)
 {
   Eigen::Matrix<double, 3, 1> sensor_to_map_eigen = tf2::transformToEigen(transform).translation();
-  std::string data_identifier                     = "test";
+  // std::string data_identifier                     = "test";
   m_vdb_map->insertDataCloud(data_identifier, cloud, sensor_to_map_eigen);
 }
 

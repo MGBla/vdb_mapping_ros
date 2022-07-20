@@ -134,7 +134,8 @@ public:
    *
    * \param cloud_msg the cloud
    */
-  void dataCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud_msg);
+  void dataCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud_msg,
+                         std::string data_identifier);
 
   /*!
    * \brief Integrating the transformed datacloud into the core mapping library
@@ -142,7 +143,8 @@ public:
    * \param cloud Data cloud transformed into map coordinates
    * \param tf Sensor transform in map coordinates
    */
-  void insertDataCloud(const typename VDBMappingT::DataCloudT::Ptr cloud,
+  void insertDataCloud(std::string data_identifier,
+                       const typename VDBMappingT::DataCloudT::Ptr cloud,
                        const geometry_msgs::TransformStamped transform);
 
   /*!
