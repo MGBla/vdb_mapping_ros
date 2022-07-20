@@ -570,7 +570,8 @@ void VDBMappingROS<VDBMappingT>::insertDataCloud(const typename VDBMappingT::Dat
                                                  const geometry_msgs::TransformStamped transform)
 {
   Eigen::Matrix<double, 3, 1> sensor_to_map_eigen = tf2::transformToEigen(transform).translation();
-  m_vdb_map->insertDataCloud(cloud, sensor_to_map_eigen);
+  std::string data_identifier                     = "test";
+  m_vdb_map->insertDataCloud(data_identifier, cloud, sensor_to_map_eigen);
 }
 
 
