@@ -28,5 +28,9 @@
     <param name="publish_vis_marker"  type="boolean" value="$(arg publish_vis_marker)"/>
     <param name="publish_updates"     type="boolean" value="$(arg publish_updates)"/>
     <param name="remote_mode"         type="boolean" value="false"/>
+    <rosparam param="data_inputs">
+      ground_types : sem_seg
+      anomalies : anomaly_detection
+    </rosparam>
   </node>
 </launch>

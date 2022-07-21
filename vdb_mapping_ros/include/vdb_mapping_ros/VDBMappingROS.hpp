@@ -140,6 +140,9 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
     m_priv_nh.param<std::string>("section_update/frame", m_section_update_frame, m_robot_frame);
   }
 
+  std::map<std::string, std::string> data_inputs;
+  m_priv_nh.getParam("data_inputs", data_inputs);
+
   if (m_apply_raw_sensor_data)
   {
     // Setting all aligned sources
@@ -176,6 +179,13 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
     std::string data_identifier = "test";
     m_data_cloud_sub            = m_nh.subscribe<sensor_msgs::PointCloud2>(
       "data_points", 1, boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, data_identifier));
+
+    for (const auto& input : data_inputs)
+    {
+      ros::Subscriber data_cloud_sub = m_nh.subscribe<sensor_msgs::PointCloud2>(
+        input.second, 1, boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, input.first));
+      m_data_cloud_sub_vec.push_back(data_cloud_sub);
+    }
   }
 
   m_visualization_marker_pub =

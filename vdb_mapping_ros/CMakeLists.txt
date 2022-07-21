@@ -84,10 +84,10 @@ add_executable(esa_${PROJECT_NAME}_node src/esa_vdb_mapping_ros_node.cpp)
 ## same as for the library above
 add_dependencies(esa_${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_include_directories(esa_${PROJECT_NAME}_node 
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+#target_include_directories(esa_${PROJECT_NAME}_node 
+  #include
+  #${catkin_INCLUDE_DIRS}
+#)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(esa_${PROJECT_NAME}_node
   vdb_mapping::vdb_mapping

@@ -344,7 +344,7 @@ private:
   /*!
    * \brief Subscriber for data pointclouds
    */
-  ros::Subscriber m_data_cloud_sub;
+  std::vector<ros::Subscriber> m_data_cloud_sub_vec;
 
 
   /*!
