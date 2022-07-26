@@ -24,7 +24,6 @@
  *
  */
 //----------------------------------------------------------------------
-#include <vdb_mapping_ros/VDBMappingTools.h>
 
 template <typename VDBMappingT>
 void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMappingT::GridT::Ptr grid,
@@ -52,6 +51,7 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
     max_z = max_z > upper_z_limit ? upper_z_limit : max_z;
   }
 
+  typename VDBMappingT::GridT::Accessor acc = grid->getAccessor();
 
   for (typename VDBMappingT::GridT::ValueOnCIter iter = grid->cbeginValueOn(); iter; ++iter)
   {
@@ -71,6 +71,19 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
       marker_msg.points.push_back(cube_center);
       // Calculate the relative height of each voxel.
       double h = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
+
+      DataNode<vdb_mapping::ESADataNode> voxel_value           = acc.getValue(iter.getCoord());
+      //std::cout << voxel_value << std::endl; 
+      //VDBMappingT::EsaDa
+      auto data                  = voxel_value.getData();
+      std::cout << "next " << data.custom_data.size() << std::endl;
+      for (const auto &word : data.custom_data) {
+
+        std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
+      }
+
+      //std::cout << data.custom_data["custom_type"] << std::endl;
+
       marker_msg.colors.push_back(heightColorCoding(h));
     }
     if (create_pointcloud)

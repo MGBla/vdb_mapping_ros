@@ -63,22 +63,25 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/vdb_mapping_ros_node.cpp)
+#add_executable(${PROJECT_NAME}_node src/vdb_mapping_ros_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
-  vdb_mapping::vdb_mapping
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(${PROJECT_NAME}_node
+  #vdb_mapping::vdb_mapping
+  #${catkin_LIBRARIES}
+#)
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(esa_${PROJECT_NAME}_node src/esa_vdb_mapping_ros_node.cpp)
+add_executable(esa_${PROJECT_NAME}_node 
+  src/esa_vdb_mapping_ros_node.cpp
+  #src/ESAVDBMappingROS.cpp
+  )
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -101,11 +104,11 @@ target_link_libraries(esa_${PROJECT_NAME}_node
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-install(TARGETS ${PROJECT_NAME}_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+#install(TARGETS ${PROJECT_NAME}_node
+  #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  #RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+#)
 
 install(TARGETS esa_${PROJECT_NAME}_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

@@ -33,6 +33,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <visualization_msgs/Marker.h>
+#include<vdb_mapping/ESAVDBMapping.h>
 
 /*!
  * \brief Collection of VDBMapping helper functions and tools
