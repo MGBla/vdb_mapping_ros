@@ -4,7 +4,7 @@
   <arg name="sensor_frame"        default="velodyne"/>
   <arg name="map_frame"           default="map"/>
   <arg name="max_range"           default="10.0"/>
-  <arg name="resolution"          default="0.07"/>
+  <arg name="resolution"          default="0.05"/>
   <arg name="prob_hit"            default="0.8"/>
   <arg name="prob_miss"           default="0.1"/>
   <arg name="prob_thres_min"      default="0.12"/>
@@ -29,6 +29,7 @@
     <param name="publish_updates"     type="boolean" value="$(arg publish_updates)"/>
     <param name="remote_mode"         type="boolean" value="false"/>
     <rosparam param="data_inputs">
+      data_points : data_points
       ground_types : sem_seg
       anomalies : anomaly_detection
     </rosparam>
