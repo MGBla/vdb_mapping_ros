@@ -70,7 +70,7 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
       cube_center.z = world_coord.z();
       marker_msg.points.push_back(cube_center);
       // Calculate the relative height of each voxel.
-      double h = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
+      //double h = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
 
       DataNode<vdb_mapping::ESADataNode> voxel_value           = acc.getValue(iter.getCoord());
       //std::cout << voxel_value << std::endl; 
@@ -80,11 +80,13 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
       for (const auto &word : data.custom_data) {
 
         std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
+
       }
 
       //std::cout << data.custom_data["custom_type"] << std::endl;
 
-      marker_msg.colors.push_back(heightColorCoding(h));
+      //marker_msg.colors.push_back(heightColorCoding(h));
+      marker_msg.colors.push_back(heightColorCoding(data.custom_data["data_points"]));
     }
     if (create_pointcloud)
     {
