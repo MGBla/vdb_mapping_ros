@@ -224,6 +224,11 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
   m_dynamic_reconfigure_initialized = false;
   m_dynamic_reconfigure_service.setCallback(
     boost::bind(&VDBMappingROS::dynamicReconfigureCallback, this, _1, _2));
+
+  m_request_ground_types_server = m_priv_nh.advertiseService(
+    "request_ground_types", &VDBMappingROS::requestPublishGroundTypes, this);
+  m_ground_types_pub =
+    m_priv_nh.advertise<sensor_msgs::PointCloud2>("ground_types_cloud", 1, false);
 }
 
 template <typename VDBMappingT>
@@ -767,4 +772,35 @@ void VDBMappingROS<VDBMappingT>::publishMap() const
   {
     m_pointcloud_pub.publish(cloud_msg);
   }
+}
+
+
+template <typename VDBMappingT>
+bool VDBMappingROS<VDBMappingT>::requestPublishGroundTypes(std_srvs::Trigger::Request& req,
+                                                           std_srvs::Trigger::Response& res)
+{
+  (void)req;
+  typename VDBMappingT::GridT::Ptr grid     = m_vdb_map->getGrid();
+  typename VDBMappingT::GridT::Accessor acc = grid->getAccessor();
+  typename VDBMappingT::DataCloudT::Ptr cloud(new typename VDBMappingT::DataCloudT);
+
+  for (typename VDBMappingT::GridT::ValueOnCIter iter = grid->cbeginValueOn(); iter; ++iter)
+  {
+    DataNode<vdb_mapping::ESADataNode> voxel_value = acc.getValue(iter.getCoord());
+    auto data                                      = voxel_value.getData();
+    if (data.custom_data["data_points"] > 0)
+    {
+      ESADataPoint point;
+      point.x           = (float)iter.getCoord().x();
+      point.y           = (float)iter.getCoord().y();
+      point.z           = (float)iter.getCoord().z();
+      point.custom_type = data.custom_data["data_points"];
+      cloud->push_back(point);
+    }
+  }
+  sensor_msgs::PointCloud2 data_cloud;
+  pcl::toROSMsg(*cloud.get(), data_cloud);
+  m_ground_types_pub.publish(data_cloud);
+  res.success = true;
+  return true;
 }

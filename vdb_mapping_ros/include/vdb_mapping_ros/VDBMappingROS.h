@@ -265,6 +265,8 @@ public:
   bool triggerMapSectionUpdateCallback(vdb_mapping_msgs::TriggerMapSectionUpdate::Request& req,
                                        vdb_mapping_msgs::TriggerMapSectionUpdate::Response& res);
 
+  bool requestPublishGroundTypes(std_srvs::Trigger::Request& req, std_srvs::Trigger::Response& res);
+
   /*!
    * \brief Callback for occupancy grid service call
    *
@@ -367,6 +369,8 @@ private:
    */
   ros::Publisher m_map_overwrite_pub;
 
+  ros::Publisher m_ground_types_pub;
+
   /*!
    * \brief Publisher for map sections
    */
@@ -412,6 +416,7 @@ private:
    */
   dynamic_reconfigure::Server<vdb_mapping_ros::VDBMappingROSConfig> m_dynamic_reconfigure_service;
 
+  ros::ServiceServer m_request_ground_types_server;
   /*!
    * \brief Transformation buffer
    */
