@@ -69,24 +69,32 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
       cube_center.y = world_coord.y();
       cube_center.z = world_coord.z();
       marker_msg.points.push_back(cube_center);
-      // Calculate the relative height of each voxel.
-      //double h = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
-
-      DataNode<vdb_mapping::ESADataNode> voxel_value           = acc.getValue(iter.getCoord());
-      //std::cout << voxel_value << std::endl; 
-      //VDBMappingT::EsaDa
-      auto data                  = voxel_value.getData();
-      std::cout << "next " << data.custom_data.size() << std::endl;
-      for (const auto &word : data.custom_data) {
-
-        std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
-
+      bool heightcoding = false;
+      if (heightcoding)
+      {
+        // Calculate the relative height of each voxel.
+        double height = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
+        marker_msg.colors.push_back(heightColorCoding(h));
       }
+      bool groundtypecoding = true;
+      if (groundtypecoding)
+      {
+        DataNode<vdb_mapping::ESADataNode> voxel_value = acc.getValue(iter.getCoord());
+        auto data                                      = voxel_value.getData();
+        marker_msg.colors.push_back(groundTypeColorCoding(data.custom_data["data_points"]));
+      }
+      // std::cout << voxel_value << std::endl;
+      // VDBMappingT::EsaDa
+      // std::cout << "next " << data.custom_data.size() << std::endl;
+      // for (const auto &word : data.custom_data) {
 
-      //std::cout << data.custom_data["custom_type"] << std::endl;
+      // std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
 
-      //marker_msg.colors.push_back(heightColorCoding(h));
-      marker_msg.colors.push_back(heightColorCoding(data.custom_data["data_points"]));
+      //}
+
+      // std::cout << data.custom_data["custom_type"] << std::endl;
+
+      // marker_msg.colors.push_back(heightColorCoding(h));
     }
     if (create_pointcloud)
     {
@@ -132,6 +140,7 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
 template <typename VDBMappingT>
 std_msgs::ColorRGBA VDBMappingTools<VDBMappingT>::heightColorCoding(const double height)
 {
+  // double h = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
   // The factor of 0.8 is only for a nicer color range
   double h = height * 0.8;
 
@@ -171,6 +180,54 @@ std_msgs::ColorRGBA VDBMappingTools<VDBMappingT>::heightColorCoding(const double
       break;
     default:
       return toMsg(1.0, 0.5, 0.5);
+      break;
+  }
+}
+
+template <typename VDBMappingT>
+std_msgs::ColorRGBA VDBMappingTools<VDBMappingT>::groundTypeColorCoding(const double type)
+{
+  // The factor of 0.8 is only for a nicer color range
+  //(255, 0, 0),
+  //(0, 255, 0),
+  //(0, 0, 255),
+  //(255, 0, 255),
+  //(255, 255, 0),
+  //(0, 255, 255),
+  //(125, 255, 0),
+
+  auto toMsg = [](double v1, double v2, double v3) {
+    std_msgs::ColorRGBA rgba;
+    rgba.a = 1.0;
+    rgba.r = v1;
+    rgba.g = v2;
+    rgba.b = v3;
+    return rgba;
+  };
+
+  int i = (int)type;
+  switch (i)
+  {
+    case 0:
+      return toMsg(1.0, 0.0, 0.0);
+      break;
+    case 1:
+      return toMsg(0.0, 1.0, 0.0);
+      break;
+    case 2:
+      return toMsg(0.0, 0.0, 1.0);
+      break;
+    case 3:
+      return toMsg(1.0, 0.0, 1.0);
+      break;
+    case 4:
+      return toMsg(1.0, 1.0, 0.0);
+      break;
+    case 5:
+      return toMsg(0.0, 1.0, 1.0);
+      break;
+    default:
+      return toMsg(0.5, 0.5, 0.5);
       break;
   }
 }

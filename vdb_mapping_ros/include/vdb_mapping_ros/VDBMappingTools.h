@@ -32,8 +32,8 @@
 #include <pcl_ros/point_cloud.h>
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <vdb_mapping/ESAVDBMapping.h>
 #include <visualization_msgs/Marker.h>
-#include<vdb_mapping/ESAVDBMapping.h>
 
 /*!
  * \brief Collection of VDBMapping helper functions and tools
@@ -74,6 +74,7 @@ public:
    * \returns RGBA color of the grid cell
    */
   static std_msgs::ColorRGBA heightColorCoding(const double height);
+  static std_msgs::ColorRGBA groundTypeColorCoding(const double type);
 };
 
 #include "VDBMappingTools.hpp"
