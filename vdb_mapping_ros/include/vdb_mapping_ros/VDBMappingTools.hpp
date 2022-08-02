@@ -74,7 +74,7 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
       {
         // Calculate the relative height of each voxel.
         double height = (1.0 - ((world_coord.z() - min_z) / (max_z - min_z)));
-        marker_msg.colors.push_back(heightColorCoding(h));
+        marker_msg.colors.push_back(heightColorCoding(height));
       }
       bool groundtypecoding = true;
       if (groundtypecoding)
