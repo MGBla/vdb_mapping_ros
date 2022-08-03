@@ -20,3 +20,9 @@ vdb_mapping:
   apply_remote_updates: false
   apply_remote_overwrites: false
   apply_remote_sections: true
+
+remote_data_sources: [vdb_ground_types]
+vdb_ground_types:
+  namespace: vdb_mapping
+  topic_name: ground_types_cloud
+  identifier: data_points

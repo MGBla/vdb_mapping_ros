@@ -140,6 +140,26 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
     m_priv_nh.param<std::string>("section_update/frame", m_section_update_frame, m_robot_frame);
   }
 
+
+  std::vector<std::string> data_source_ids;
+  m_priv_nh.param<std::vector<std::string> >(
+    "remote_data_sources", data_source_ids, std::vector<std::string>());
+  for (auto& source_id : data_source_ids)
+  {
+    std::string remote_namespace;
+    m_priv_nh.param<std::string>(source_id + "/namespace", remote_namespace, "");
+
+   std::string topic_name;
+m_priv_nh.param<std::string>(source_id + "/topic_name", topic_name, ""); 
+   std::string data_identifier;
+m_priv_nh.param<std::string>(source_id + "/identifier", data_identifier, "");   
+      ros::Subscriber data_cloud_sub = m_nh.subscribe<sensor_msgs::PointCloud2>(
+        remote_namespace + "/" + topic_name, 1, boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, data_identifier));
+      m_data_cloud_sub_vec.push_back(data_cloud_sub);
+
+  }
+
+
   std::map<std::string, std::string> data_inputs;
   m_priv_nh.getParam("data_inputs", data_inputs);
 
@@ -558,6 +578,7 @@ template <typename VDBMappingT>
 void VDBMappingROS<VDBMappingT>::dataCloudCallback(
   const sensor_msgs::PointCloud2::ConstPtr& cloud_msg, std::string data_identifier)
 {
+  std::cout << "insert" << std::endl;
   geometry_msgs::TransformStamped sensor_to_map_tf;
   try
   {
@@ -800,6 +821,8 @@ bool VDBMappingROS<VDBMappingT>::requestPublishGroundTypes(std_srvs::Trigger::Re
   }
   sensor_msgs::PointCloud2 data_cloud;
   pcl::toROSMsg(*cloud.get(), data_cloud);
+  data_cloud.header.stamp = ros::Time::now();
+  data_cloud.header.frame_id = m_map_frame;
   m_ground_types_pub.publish(data_cloud);
   res.success = true;
   return true;

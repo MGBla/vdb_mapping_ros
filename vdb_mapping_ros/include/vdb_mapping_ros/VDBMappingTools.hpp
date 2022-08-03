@@ -35,6 +35,7 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
                                                        const double lower_z_limit,
                                                        const double upper_z_limit)
 {
+
   typename VDBMappingT::PointCloudT::Ptr cloud(new typename VDBMappingT::PointCloudT);
 
   openvdb::CoordBBox bbox = grid->evalActiveVoxelBoundingBox();
@@ -82,13 +83,19 @@ void VDBMappingTools<VDBMappingT>::createMappingOutput(const typename VDBMapping
         DataNode<vdb_mapping::ESADataNode> voxel_value = acc.getValue(iter.getCoord());
         auto data                                      = voxel_value.getData();
         marker_msg.colors.push_back(groundTypeColorCoding(data.custom_data["data_points"]));
+       //for (const auto &word : data.custom_data) {
+
+       //std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
+
+      //}
       }
+      
       // std::cout << voxel_value << std::endl;
       // VDBMappingT::EsaDa
       // std::cout << "next " << data.custom_data.size() << std::endl;
-      // for (const auto &word : data.custom_data) {
+       //for (const auto &word : data.custom_data) {
 
-      // std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
+       //std::cout << "[" << word.first << ", " << word.second << "]" << std::endl;
 
       //}
 
