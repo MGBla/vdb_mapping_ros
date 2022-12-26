@@ -463,7 +463,7 @@ bool VDBMappingROS<VDBMappingT>::occGridGenCallback(vdb_mapping_msgs::GetOccGrid
 
   grid.info.origin   = origin_pose;
   int world_to_index = 0;
-  for (openvdb::FloatGrid::ValueOnCIter iter = m_vdb_map->getGrid()->cbeginValueOn(); iter; ++iter)
+  for (auto iter = m_vdb_map->getGrid()->cbeginValueOn(); iter; ++iter)
   {
     if (iter.isValueOn())
     {
