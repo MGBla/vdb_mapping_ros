@@ -143,26 +143,24 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
 
   std::vector<std::string> data_source_ids;
   m_priv_nh.param<std::vector<std::string> >(
-    "remote_data_sources", data_source_ids, std::vector<std::string>());
+    "data_sources", data_source_ids, std::vector<std::string>());
   for (auto& source_id : data_source_ids)
   {
-    std::string remote_namespace;
-    m_priv_nh.param<std::string>(source_id + "/namespace", remote_namespace, "");
+    ROS_INFO_STREAM("Setting up source: " << source_id);
 
     std::string topic_name;
-    m_priv_nh.param<std::string>(source_id + "/topic_name", topic_name, "");
+    m_priv_nh.param<std::string>(source_id + "/topic", topic_name, "");
+    ROS_INFO_STREAM("Topic: " << topic_name);
     std::string data_identifier;
     m_priv_nh.param<std::string>(source_id + "/identifier", data_identifier, "");
+    ROS_INFO_STREAM("Identififer: " << data_identifier);
     ros::Subscriber data_cloud_sub = m_nh.subscribe<sensor_msgs::PointCloud2>(
-      remote_namespace + "/" + topic_name,
+      topic_name,
       1,
       boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, data_identifier));
     m_data_cloud_sub_vec.push_back(data_cloud_sub);
   }
 
-
-  std::map<std::string, std::string> data_inputs;
-  m_priv_nh.getParam("data_inputs", data_inputs);
 
   if (m_apply_raw_sensor_data)
   {
@@ -198,12 +196,6 @@ VDBMappingROS<VDBMappingT>::VDBMappingROS(const ros::NodeHandle& nh)
         boost::bind(&VDBMappingROS::cloudCallback, this, _1, sensor_source)));
     }
 
-    for (const auto& input : data_inputs)
-    {
-      ros::Subscriber data_cloud_sub = m_nh.subscribe<sensor_msgs::PointCloud2>(
-        input.second, 1, boost::bind(&VDBMappingROS::dataCloudCallback, this, _1, input.first));
-      m_data_cloud_sub_vec.push_back(data_cloud_sub);
-    }
   }
 
   m_visualization_marker_pub =

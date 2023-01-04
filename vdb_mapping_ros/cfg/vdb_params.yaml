@@ -35,3 +35,7 @@ velodyne:
 combined:
   topic: anymal/depth/combined_points
 
+data_sources: [ground_types]
+ground_types:
+  topic: data_points
+  identifier: data_points

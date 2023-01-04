@@ -3,10 +3,5 @@
 
   <node pkg="vdb_mapping_ros" type="esa_vdb_mapping_ros_node" name="vdb_mapping" output="screen">
     <rosparam file="$(arg config)" command="load"/>
-    <rosparam param="data_inputs">
-      data_points : points
-      ground_types : sem_seg
-      anomalies : anomaly_detection
-    </rosparam>
   </node>
 </launch>
